@@ -1,0 +1,266 @@
+paths:
+  '/store/{store_id}':
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      tags:
+        - stores
+    delete:
+      responses:
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      tags:
+        - stores
+    parameters:
+      - in: path
+        name: store_id
+        required: true
+        schema:
+          type: string
+          minLength: 1
+  /store:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      tags:
+        - stores
+    post:
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Store'
+      tags:
+        - stores
+  '/item/{item_id}':
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      tags:
+        - items
+    put:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemUpdate'
+      tags:
+        - items
+    delete:
+      responses:
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      tags:
+        - items
+    parameters:
+      - in: path
+        name: item_id
+        required: true
+        schema:
+          type: string
+          minLength: 1
+  /item:
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      tags:
+        - items
+    post:
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '422':
+          $ref: '#/components/responses/UNPROCESSABLE_ENTITY'
+        default:
+          $ref: '#/components/responses/DEFAULT_ERROR'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      tags:
+        - items
+info:
+  title: Stores_python_flask
+  version: v1
+tags:
+  - name: stores
+    description: ''
+  - name: items
+    description: ''
+openapi: 3.0.3
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Error code
+        status:
+          type: string
+          description: Error name
+        message:
+          type: string
+          description: Error message
+        errors:
+          type: object
+          description: Errors
+    PaginationMetadata:
+      type: object
+      properties:
+        total:
+          type: integer
+        total_pages:
+          type: integer
+        first_page:
+          type: integer
+        last_page:
+          type: integer
+        page:
+          type: integer
+        previous_page:
+          type: integer
+        next_page:
+          type: integer
+    PlainItem:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        price:
+          type: number
+      required:
+        - name
+        - price
+    Store:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        items:
+          type: array
+          items:
+            readOnly: true
+            allOf:
+              - $ref: '#/components/schemas/PlainItem'
+      required:
+        - name
+    PlainStore:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+      required:
+        - name
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        price:
+          type: number
+        store_id:
+          type: string
+          writeOnly: true
+        store:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/PlainStore'
+      required:
+        - name
+        - price
+        - store_id
+    ItemUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+  responses:
+    DEFAULT_ERROR:
+      description: Default error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UNPROCESSABLE_ENTITY:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
